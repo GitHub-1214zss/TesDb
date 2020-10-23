@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>Layui</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<!--    <link rel="stylesheet" th:href="@{/css/x-admin.css}" media="all">-->
+    <link rel="stylesheet" th:href="@{/lib/layui/css/layui.css}" media="all">
+    <script th:src="@{/js/jquery.min.js}"></script>
+    <script th:src="@{/lib/layui/layui.js}" charset="utf-8"></script>
+<!--    <script th:src="@{/js/x-layui.js}" charset="utf-8"></script>-->
+
+</head>
+<body>
+<div class="layui-btn-container" th:switch="${session.users.getName()}">
+    <div th:case="'系统管理员'">
+        <div id="layerDemo" style="margin-top:10px ">
+                <button type="button" class="layui-btn layui-btn-sm"  data-method="notice" >
+                    <i class="layui-icon layui-icon-add-1" style="font-size: 30px; color: white;">
+                    </i>
+                    新增
+                </button>
+                <a class="layui-btn btn-add btn-default" id="btn-refresh"><i class="layui-icon">&#x1002;</i></a>
+        </div>
+        <table class="layui-hide" id="test" lay-filter="test"></table>
+    </div>
+<!--    <%&#45;&#45;修改的弹框&#45;&#45;%>-->
+</div>
+<form class="layui-form layui-form-pane1" id="form1" name="form1" style="display: none;"  lay-filter="first1">
+    <div class="layui-form-item" style="display: none">
+        <label class="layui-form-label">id</label>
+        <div class="layui-input-inline">
+            <input type="text" name="id" id="id" lay-verify="required|title" required placeholder="请输入id" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">名字</label>
+        <div class="layui-input-inline">
+            <input type="text" name="account" id="account" lay-verify="required|title" required placeholder="请输入名字" readonly="readonly" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">开始时间</label>
+        <div class="layui-input-inline">
+            <input type="text" name="stardatatime" id="stardatatime"  placeholder="请输入开始时间" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">结束时间</label>
+        <div class="layui-input-inline">
+            <input type="text" name="enddatatime" id="enddatatime"  placeholder="请输入结束时间" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">状态</label>
+        <div class="layui-input-inline">
+            <select name="status" id="status" lay-verify="required|" lay-filter="interest-search" lay-search>
+                <option value=""></option>
+                <option value="正常">正常</option>
+                <option value="失效" >失效</option>
+
+
+            </select>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn update" type="button"  lay-filter="*">修改</button>
+        </div>
+    </div>
+</form>
+<script type="text/html" id="toolbarDemo">
+        <button class="layui-btn layui-btn-sm" lay-event="getCheckData">获取选中行数据</button>
+        <button class="layui-btn layui-btn-sm" lay-event="getCheckLength">获取选中数目</button>
+        <button class="layui-btn layui-btn-sm" lay-event="isAll">验证是否全选</button>
+</script>
+
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-xs" lay-event="detail">查看</a>
+    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+
+
+<!--<script src="//res.layui.com/layui/dist/layui.js" charset="utf-8"></script>-->
+<!-- 注意：如果你直接复制所有代码到本地，上述js路径需要改成你本地的 -->
+
+<script type="text/javascript">
+    layui.use(['table','layer'],function(){
+        var table = layui.table;
+        var $ = layui.jquery, layer = layui.layer; //独立版的layer无需执行这一句
+      var tableIn=  table.render({
+            elem: '#test'
+            ,url:'/Pingjia/type'
+            ,toolbar: '#toolbarDemo' //开启头部工具栏，并为其绑定左侧模板
+            ,defaultToolbar: ['filter', 'exports', 'print', { //自定义头部工具栏右侧图标。如无需自定义，去除该参数即可
+                title: '提示'
+                ,layEvent: 'LAYTABLE_TIPS'
+                ,icon: 'layui-icon-tips'
+            }]
+            ,title: '评价数据表'
+            ,cols: [
+                [
+                {type: 'checkbox', fixed: 'left'}
+                ,{field:'id', title:'ID', width:80, fixed: 'left'}
+                ,{field:'name', title:'任务名字', width:120, edit: 'text'}
+                ,{field:'startdata', title:'开始时间', width:150}
+                ,{field:'enddata', title:'结束时间', width:150}
+                ,{field:'status', title:'状态', width:150}
+                ,{fixed: 'right', title:'操作', toolbar: '#barDemo', width:150}
+            ]
+            ]
+            ,page: true
+            ,parseData: function(res){ //将原始数据解析成 table 组件所规定的数据
+                console.log(res);
+                return {
+                    "code": res.code, //解析接口状态
+                    "msg": res.msg, //解析提示文本
+                    "count": res.count, //解析数据长度
+                    "data": res.data //解析数据列表
+                };
+            }
+        });
+        //监听行工具事件
+        table.on('tool(test)', function(obj){
+            var data = obj.data;
+            if(obj.event === 'del'){
+                layer.confirm('真的删除行么', function(index){
+                    $.ajax({
+                        dataType:"json",
+                        url: "/Pingjia/delete/"+data.id,
+                        type: "get",
+                        // data: {eqptType: data.eqptType, eqptIdCode: data.eqptIdCode},
+                        success: function (msg) {
+                            if (msg["code"] == 200) {
+                                //删除这一行
+                                obj.del();
+                                //关闭弹框
+                                layer.close(index);
+                                layer.msg("删除成功", {icon: 6});
+                            } else {
+                                layer.msg("删除失败", {icon: 5});
+                            }
+                        }
+                    });
+                });
+            } else if(obj.event === 'edit'){
+                $("#id").val(data.id);
+                $("#account").val(data.name);
+                $("#stardatatime").val(data.startdata);
+                $("#enddatatime").val(data.enddata);
+                //$("#status").find("option[value = '"+data.status+"']").attr("selected",true);
+                $("#status").val(data.status);
+
+                layer.open({
+                    title:'修改评价任务',
+                    type:1,
+                    area:['400px','400px'],
+                    content:$("#form1")
+                });
+
+                // layer.open({
+                //     type: 2,
+                //     title: '修改',
+                //     maxmin: true,
+                //     area: ['420px', '330px'],
+                //     shadeClose: false, //点击遮罩关闭
+                //     content: 'CollectorUpdate-form.html',
+                // });
+                // update(data)
+                // layer.prompt({
+                //     formType: 2
+                //     ,value: data.email
+                // }, function(value, index){
+                //     $.ajax({
+                //         url: "/admin/modiSens",
+                //         type: "POST",
+                //         data:{"id":data.id,"word":value},
+                //         dataType: "json",
+                //         success: function(result){
+                //             if(result>=1){
+                //                 layer.close(index);
+                //                 //同步更新表格和缓存对应的值
+                //                 obj.update({
+                //                     word: value
+                //                 });
+                //                 layer.msg("修改成功", {icon: 6});
+                //             }else{
+                //                 layer.msg("修改失败", {icon: 5});
+                //             }
+                //         }
+                //     });
+                //
+                //     layer.close(index);
+                // });
+            }else if(obj.event === 'detail'){
+                layer.open({
+                    title:'查看评价任务',
+                    type:2,
+                    area:['400px','400px']
+                    ,btn: ['确认'],
+                    content:"/Pingjia/details/"+data.id
+                    ,yes:function(){
+                        //当你在iframe页面关闭自身时
+                        layer.close(layer.index);
+
+                    }
+                });
+            }
+        });
+        //触发事件
+        var active = {
+            notice: function() {
+                //示范一个公告层
+                layer.open({
+                    type: 2//0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层)
+                    ,title: false //不显示标题栏
+                    ,closeBtn: false
+                    ,area: ['550px','535px']//定义宽高
+                    ,shade: 0.8//遮幕
+                    ,id: 'LAY_layuipro' //设定一个id，防止重复弹出
+                    ,btn: ['主界面', '取消']
+                    ,btnAlign: 'c'//按钮排列：居中对齐
+                    ,moveType: 1 //拖拽模式，0或者1
+                    ,content: '/Pingjia/addtype'//跳转到想要的界面，这里是我自己项目的跳转界面
+                    ,
+                    success: function (layero) {
+                        var btn = layero.find('.layui-layer-btn');
+                        btn.find('.layui-layer-btn0').attr({
+                            href: '/Pingjia/teacher'
+                            , target: '_blank'
+                        });
+                    }
+                })
+            }}
+        $('#layerDemo .layui-btn').on('click', function(){
+            var othis = $(this), method = othis.data('method');
+            active[method] ? active[method].call(this, othis) : '';
+        });
+        // 刷新表格
+        $('#btn-refresh').on('click', function () {
+            tableIn.reload()
+        });
+        $(".update").click(function () {
+            alert("========"+$("select").html())
+            $.ajax({
+                contentType: "application/json;charset=UTF-8",
+                dataType:"json",
+                url: "/Pingjia/update",
+                type: "post",
+                data: JSON.stringify({id:$("#id").val(),name: $("#account").val(), startdata: $("#stardatatime").val(),enddata:$("#enddatatime").val(),status:$("#status").val()}),
+                success: function (msg) {
+                    if (msg["code"] == 200) {
+                        //删除这一行
+                        //关闭弹框
+                        console.log(msg)
+                        layer.msg("修改成功", {icon: 6});
+                        // setTimeout(function(){ parent.location.href ='/Pingjia/teacher'; },2000);
+                        location.reload();
+
+                    } else {
+                        layer.msg("修改失败", {icon: 5});
+                    }
+                }
+            });
+        })
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>Layui</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <!--    <link rel="stylesheet" th:href="@{/css/x-admin.css}" media="all">-->
+    <link rel="stylesheet" th:href="@{/lib/layui/css/layui.css}" media="all">
+    <script th:src="@{/js/jquery.min.js}"></script>
+    <script th:src="@{/lib/layui/layui.js}" charset="utf-8"></script>
+    <!--    <script th:src="@{/js/x-layui.js}" charset="utf-8"></script>-->
+
+</head>
+<body>
+<form class="layui-form layui-form-pane1" id="form1" name="form1" lay-filter="first1">
+    <div class="layui-form-item">
+        <label class="layui-form-label" for="city">任务</label>
+        <div class="layui-input-inline">
+            <select name="city" id="city" lay-verify="required" lay-filter="selectTask" class="select">
+                <option value="">请选择一个任务</option>
+                <option th:each="task:${allTask1}" th:value="${task.getId()}" th:text="${task.getName()}"></option>
+            </select>
+        </div>
+
+    </div>
+</form>
+<table class="layui-hide" lay-filter="test" id="test">
+</table>
+<script type="text/javascript">
+    layui.use(['table', 'layer', 'form'], function () {
+        var table = layui.table;
+        var $ = layui.jquery, layer = layui.layer; //独立版的layer无需执行这一句
+        var form = layui.form;
+
+        form.on('select(selectTask)', function (data) {
+            var taskId = $("select[name=city]").val();
+            table.render({
+                elem: '#test'
+                , url: '/Indicator/code/' + taskId
+                , toolbar: '#toolbarDemo' //开启头部工具栏，并为其绑定左侧模板
+                , defaultToolbar: ['filter', 'exports', 'print', { //自定义头部工具栏右侧图标。如无需自定义，去除该参数即可
+                    title: '提示'
+                    , layEvent: 'LAYTABLE_TIPS'
+                    , icon: 'layui-icon-tips'
+                }]
+                , title: '评价数据表'
+                , cols: [
+                    [
+                        {type: 'checkbox', fixed: 'left', rowspan: 2}
+                        , {field: 'name', align: 'center', rowspan: 2, title: '姓名', fixed: 'left'}
+                        , {field: 'dname', align: 'center', rowspan: 2, title: '部门'}
+                        , {field: 'studentType', align: 'center',title: '学生评价(30%)', colspan: 3, rowspan: 1}
+                        , {field: 'thisType', align: 'center', title: '互评(20%)', colspan: 3, rowspan: 1}
+                        , {align: 'center',title: '自评(15%)',field: 'teacherscore', rowspan: 2}
+                        , {align: 'center', title: '教研室评价(20%)',field: 'jiaoScore', rowspan: 2}
+                        , {align: 'center', title: '系部评价(25%)', field: 'sumScore',rowspan: 2}
+                        , {field: 'sunCode', align: 'center', title: '总分', rowspan: 2}
+                    ],
+                    [
+                        {title: '应评人数', align: 'center', field: 'studentSum'},
+                        {title: '实评人数', align: 'center', field: 'resultSum'},
+                        {title: '分数', align: 'center', field: 'score'},
+                        {title: '应评人数', align: 'center', field: 'thisSum'},
+                        {title: '实评人数', align: 'center', field: 'rthisSum'},
+                        {title: '分数', align: 'center', field: 'thisScore'},
+
+                        // {title: '分数', align: 'center', field: 'teacherscore'},
+                        //
+                        // {title: '分数', align: 'center', field: 'jiaoScore'},
+                        //
+                        // {title: '分数', align: 'center', field: 'sumScore'},
+                    ]
+                ]
+                , page: true
+                , parseData: function (res) { //将原始数据解析成 table 组件所规定的数据
+                    console.log(res);
+                    return {
+                        "code": res.code, //解析接口状态
+                        "msg": res.msg, //解析提示文本
+                        "count": res.count, //解析数据长度
+                        "data": res.data //解析数据列表
+                    };
+                }
+            });
+
+        });
+    });
+</script>
+
+</body>
+</html>

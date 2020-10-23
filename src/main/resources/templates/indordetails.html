@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+    <meta>
+        <meta charset="utf-8"></meta>
+        <title>
+            教师综合评价系统 v1.0
+        </title>
+        <meta name="renderer" content="webkit">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="format-detection" content="telephone=no">
+        <link rel="stylesheet" th:href="@{/lib/layui/css/layui.css}" media="all">
+        <link rel="stylesheet" th:href="@{/css/x-admin.css}" media="all">
+        <script th:src="@{/js/jquery.min.js}"></script>
+    </head>
+
+    <body>
+        <div class="x-body">
+            <form class="layui-form">
+                <div class="layui-form-item">
+                    <div class="layui-input-inline">
+                        <input type="hidden"  id="id" name="id" th:value="${indicatorsss.getId()}" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label for="faid" class="layui-form-label">
+                        父亲id
+                    </label>
+                    <div class="layui-input-inline">
+                        <input type="text"  id="faid" name="faid" readonly="readonly" th:value="${indicatorsss.getParentid()}" required="" lay-verify="required"
+                        autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label for="course" class="layui-form-label">
+                        排序码
+                    </label>
+                    <div class="layui-input-inline">
+                        <input type="username" id="course" name="course" th:value="${indicatorsss.getSortcode()}" required="" lay-verify="pass"
+                        autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label for="inid" class="layui-form-label">
+                        指标名称
+                    </label>
+                    <div class="layui-input-inline">
+                        <input type="username" id="inid" name="inid" th:value="${indicatorsss.getIndicatorname()}" required="" lay-verify="pass"
+                               autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label for="sode" class="layui-form-label">
+                        权重
+                    </label>
+                    <div class="layui-input-inline">
+                        <input type="username" id="sode" name="sode" th:value="${indicatorsss.getWeight()}" required="" lay-verify="pass"
+                               autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+        <div class="x-body">
+                <table class="layui-table">
+                    <thead>
+                    <tr>
+                        <th>
+                            ID
+                        </th>
+                        <th>
+                            选项内容
+                        </th>
+                        <th>
+                            分数
+                        </th>
+                        <th>
+                            操作
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="class:${rlternatives}">
+                        <td>
+                            <input type="text" readonly="readonly" th:value="${class.getId()}" name="">
+                        </td>
+                        <td>
+                            <input type="text" th:value="${class.getContent()}" name="">
+                        </td>
+                        <td>
+                            <input type="text" th:value="${class.getScore()}" name="">
+                        </td>
+                        <td>
+                            <a class="layui-btn layui-btn-danger layui-btn-xs"  onclick="dianji(this)">删除一行</a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+        </div>
+                <div class="layui-form-item">
+                    <label for="course" class="layui-form-label">
+                    </label>
+                    <button id="buttons" class="layui-btn" lay-filter="add" type="button">
+                        修改
+                    </button>
+                    <a class="layui-btn layui-btn-xs" id="details">添加一行</a>
+                </div>
+            </form>
+        </div>
+        <script type="text/javascript">
+           $(function () {
+              //监听提交
+                $("#buttons").click(function () {
+                    var id=$("#id").val();
+                    var sode=$("#course").val();
+                    var parentId=$("#faid").val();
+                    var weight=$("#sode").val();
+                    var name=$("#inid").val();
+                    var data2=new Array();
+                    var data3=new Array();
+                    var data4=new Array();
+                    $("tbody tr").each(function (index) {
+                        var data =$($(this).children()[1]).children().val();
+                        var data1 =$($(this).children()[2]).children().val();
+                        var data5 =$($(this).children()[0]).children().val();
+                        data2.push(data);
+                        data3.push(data1);
+                        data4.push(data5);
+                    });
+                    $.ajax({
+                        contentType: "application/json; charset=UTF-8",
+                        type: "POST",
+                        dataType:"json",
+                        url:"/Indicator/updateI",
+                        traditional: true,
+                        data:JSON.stringify({id:id,parentid:parentId,indicatorname:name,weight:weight,sortcode:sode,boxType1:data4,boxIds:data2,boxType:data3}),
+                        async: false, //异步传输
+                        success: function (data) {
+                            if (data["code"] == 200) {
+                                //关闭弹框
+                                console.log("修改成功");
+                                parent.location.reload();
+                            } else {
+
+                            }
+                        },
+                        })
+                })
+                $("#details").click(function () {
+                    console.log($("tbody tr:last"));
+                    var s="<tr>\n" +
+                        "                        <td>\n" +
+                        "                            <input type='text' readonly='readonly' value='' name=''>\n" +
+                        "                        </td>\n" +
+                        "                        <td>\n" +
+                        "                            <input type='text' value='1' name=''>\n" +
+                        "                        </td>\n" +
+                        "                        <td>\n" +
+                        "                            <input type='text' value='1' name=''>\n" +
+                        "                        </td>\n" +
+                        "                        <td>\n" +
+                        "                            <a class='layui-btn layui-btn-danger layui-btn-xs' onclick='dianji(this)'>删除一行</a>\n" +
+                        "                        </td>\n" +
+                        "                    </tr>"
+                       $("tbody tr:last").after(s);
+                })
+
+            });
+           function dianji(obj) {
+                   $(obj).parent().parent().remove();
+                   // console.log($(this).parent().parent().html());
+               }
+
+        </script>
+    </body>
+
+</html>

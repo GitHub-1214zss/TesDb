@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>Layui</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <!--    <link rel="stylesheet" th:href="@{/css/x-admin.css}" media="all">-->
+    <link rel="stylesheet" th:href="@{/lib/layui/css/layui.css}" media="all">
+    <script th:src="@{/js/jquery.min.js}"></script>
+    <script th:src="@{/lib/layui/layui.js}" charset="utf-8"></script>
+    <!--    <script th:src="@{/js/x-layui.js}" charset="utf-8"></script>-->
+
+</head>
+<body>
+<div th:each="vo,vostatus:${vot3}">
+    <div th:text="${vo.getIndicatorname()}" style="width:300px; font-size: 23px ;color: #01AAED;margin-top: 15px" ></div>
+    <div th:each="item:${vo.getItems()}" >
+        <div th:each="s:${eidet9}">
+            <div th:if="${#strings.contains(s,vo.getId()+'|')}">
+                <div th:switch="${#strings.contains(s,'|'+item.getId())}">
+                    <input th:case="true" type="radio" disabled checked th:value="${vo.getId()+'|'+item.getId()}" th:name="'t'+${vostatus.index}">
+                    <input th:case="false" type="radio" disabled th:value="${vo.getId()+'|'+item.getId()}" th:name="'t'+${vostatus.index}">
+                    <label th:text="${item.getContent()}"></label>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    layui.use(['table','layer','form'],function(){
+        var table = layui.table;
+        var $ = layui.jquery, layer = layui.layer; //独立版的layer无需执行这一句
+        var form = layui.form;
+    })
+</script>
+
+</body>
+</html>

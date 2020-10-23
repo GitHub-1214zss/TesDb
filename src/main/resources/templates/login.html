@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="utf-8">
+        <title>
+            教师综合评价系统 v1.0
+        </title>
+        <meta name="renderer" content="webkit">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+        <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="format-detection" content="telephone=no">
+        <link rel="stylesheet" href="../css/x-admin.css" media="all">
+<!--        <script src="../js/jquery-1.9.1.min.js"></script>-->
+        <script src="../js/jquery.min.js"></script>
+    </head>
+
+    <body style="background-color: #393D49">
+        <div class="x-box">
+            <div class="x-top">
+                <i class="layui-icon x-login-close">
+                    &#x1007;
+                </i>
+                <ul class="x-login-right">
+                    <li style="background-color: #F1C85F;" color="#F1C85F">
+                    </li>
+                    <li style="background-color: #EA569A;" color="#EA569A">
+                    </li>
+                    <li style="background-color: #393D49;" color="#393D49">
+                    </li>
+                </ul>
+            </div>
+            <div class="x-mid">
+                <div class="x-avtar">
+                    <img src="../images/logo.png" alt="">
+                </div>
+                <div class="input">
+                    <form class="layui-form">
+                        <div class="layui-form-item x-login-box" style="margin-top: -40px">
+                            <label for="username" class="layui-form-label">
+                                <i class="layui-icon">&#xe612;</i>
+                            </label>
+                            <div class="layui-input-inline">
+                                <input type="text" id="username" name="username" required="" lay-verify="username"
+                                autocomplete="off" placeholder="username" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item x-login-box" style="margin-top: -15px">
+                            <label for="pass" class="layui-form-label">
+                                <i class="layui-icon">&#xe628;</i>
+                            </label>
+                            <div class="layui-input-inline">
+                                <input type="password" id="pass" name="pass" required="" lay-verify="pass"
+                                autocomplete="off" placeholder="******" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item x-login-box" style="margin-top: -15px;">
+                            <label  class="layui-form-label">
+                                <i class="layui-icon">&#xe612;</i>
+                            </label>
+                            <div class="layui-input-inline">
+                                <input type="text" id="code"  required="" name="code" value=""
+                                       autocomplete="off" placeholder="验证码" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item x-login-box">
+
+                                <img  width="120" id="verify_code_img" height="32" src="/SysUser/getImg" onclick="javascript:changeImg()">
+                                <a href="#" class="doc-color-link desc" onclick="javascript:changeImg()" >看不清，换一个？</a>
+
+                        </div>
+
+                        <div class="layui-form-item" id="loginbtn">
+                            <button type="button"  class="layui-btn" lay-filter="save" lay-submit="">
+                                登 录
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <p style="color:#fff;text-align: center;">教师综合评价系统 </p>
+        <script src="../lib/layui/layui.js" charset="utf-8">
+        </script>
+
+        <script type="text/javascript">
+            function changeImg(){
+                var img = document.getElementById("verify_code_img");
+                img.src = "/SysUser/getImg?date=" + new Date();
+            }
+            // $(function () {
+            // //     console.log("11111111111111");
+            //     $('.x-login-right li').click(function(event) {
+            //                  color = $$(this).attr('color');
+            //                  $('body').css('background-color', color);
+            //             });
+            //     $(".layui-btn").click(function () {
+            //         console.log("11111111111111")
+            //         $.ajax({
+            //             contentType: "application/json; charset=utf-8",
+            //             type: "post",
+            //             url:"/SysUser/Login",
+            //             data: JSON.stringify({account:$("#username").val(),password:$("#pass").val()}),
+            //             async: true, //异步传输
+            //             success: function (data) {
+            //                // layer.msg("登录成功");
+            //                 console.log("1111");
+            //                 window.location.href = "src/main/resources/static/index.html";
+            //             }
+            //
+            //         })
+            //     })
+            // //
+            // //
+            //     })
+            layui.use(['form'],
+                    function() {
+                        $$ = layui.jquery;
+                        var form = layui.form,
+                            layer = layui.layer;
+
+                        $$('.x-login-right li').click(function(event) {
+                            color = $$(this).attr('color');
+                            $$('body').css('background-color', color);
+                        });
+            //
+            //    // 监听提交
+                form.on('submit(save)',
+                function(data) {
+                    var s=true;
+                    console.log(JSON.stringify(data.field));
+                    console.log($("#code").val());
+                    $.ajax({
+                        contentType: "application/json; charset=UTF-8",
+                        type: "POST",
+                        dataType:"json",
+                        url:"/SysUser/Login",
+                        data:JSON.stringify({account:$("#username").val(),password:$("#pass").val(),code:$("#code").val()}),
+                        async: true, //异步传输
+                        success: function (data) {
+                             if(data["msg"]=="执行成功"){
+                                layer.msg("登录成功");
+                                //alert(data["msg"]);
+                                 window.location.href="index";
+                            }
+                            else {
+                                layer.msg("登录失败原因"+"========"+data["msg"]);
+                                s=false;
+                                return s;
+                            }
+                            //window.location="../static/index.html";
+                        },
+                        error: function () {
+                            console.log("失败")
+                            s=false;
+                            return s;
+                        }
+                    })
+
+                //     // layer.alert(JSON.stringify(data.field), {
+                //     //     title: '最终的提交信息'
+                //     //
+                //     //  },function  () {
+                //     //     location.href = "index.html";
+                //     // })
+                return s;
+                 });
+
+            });
+
+        </script>
+    </body>
+
+</html>

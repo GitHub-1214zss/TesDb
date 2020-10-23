@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>Layui</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <!--    <link rel="stylesheet" th:href="@{/css/x-admin.css}" media="all">-->
+    <link rel="stylesheet" th:href="@{/lib/layui/css/layui.css}" media="all">
+    <script th:src="@{/js/jquery.min.js}"></script>
+    <script th:src="@{/lib/layui/layui.js}" charset="utf-8"></script>
+    <!--    <script th:src="@{/js/x-layui.js}" charset="utf-8"></script>-->
+
+</head>
+<body>
+<form class="layui-form layui-form-pane1" id="form1" name="form1"  lay-filter="first1">
+    <div class="layui-form-item">
+        <label class="layui-form-label">编号</label>
+        <div class="layui-input-inline">
+            <input type="text" name="account" id="account"   autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">班级名称</label>
+        <div class="layui-input-inline">
+            <input type="text" name="stardatatime" id="stardatatime"  autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+    <button  class="layui-btn layui-btn-sm" id="tianjia">
+        <i class="layui-icon">&#xe608;</i>添加
+    </button>
+    </div>
+</form>
+
+<!--<script src="//res.layui.com/layui/dist/layui.js" charset="utf-8"></script>-->
+<!-- 注意：如果你直接复制所有代码到本地，上述js路径需要改成你本地的 -->
+
+<script type="text/javascript">
+    layui.use(['table','layer'],function(){
+        var table = layui.table;
+        var $ = layui.jquery, layer = layui.layer; //独立版的layer无需执行这一句
+
+        $("#tianjia").click(function () {
+            $.ajax({
+                contentType: "application/json; charset=UTF-8",
+                type: "POST",
+                dataType:"json",
+                url:"/Class/type",
+                async:false,
+                data:JSON.stringify({name:$("#stardatatime").val(),code:$("#account").val()}),
+                success:function (data) {
+                            if(data!=null){
+                                parent.location.reload();
+                            }
+                }
+            })
+        })
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>Layui</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <!--    <link rel="stylesheet" th:href="@{/css/x-admin.css}" media="all">-->
+    <link rel="stylesheet" th:href="@{/lib/layui/css/layui.css}" media="all">
+    <script th:src="@{/js/jquery.min.js}"></script>
+    <script th:src="@{/lib/layui/layui.js}" charset="utf-8"></script>
+    <!--    <script th:src="@{/js/x-layui.js}" charset="utf-8"></script>-->
+
+</head>
+<body>
+<div th:each="vo,vostatus:${session.vos2}">
+    <div th:text="${vo.getIndicatorname()}" style="width:300px; font-size: 23px ;color: #01AAED;margin-top: 15px"></div>
+    <div th:each="item:${vo.getItems()}" >
+        <input type="radio" th:value="${vo.getId()+'|'+item.getId()}" th:name="'t'+${vostatus.index}">
+        <label th:text="${item.getContent()}"></label>
+    </div>
+</div>
+<input id="typeId" th:value="${typeId}" type="hidden" >
+<input id="courseId" th:value="${courseId}" type="hidden" >
+<input id="teacherId" th:value="${teacherId}" type="hidden">
+<input id="taskId" th:value="${taskId}" type="hidden">
+<input id="tCount" style="display: none" th:value="${session.vos2.size()}">
+<button id="button" style="margin-left: 280px;background: #00FFFF;color: #00FF00;font-size: 10px;width: 100px"> 确认</button>
+
+<script type="text/javascript">
+    layui.use(['table','layer','form'],function(){
+        var table = layui.table;
+        var $ = layui.jquery, layer = layui.layer; //独立版的layer无需执行这一句
+        var form = layui.form;
+        $("#button").click(function () {
+            var s=Number($("#tCount").val());
+            var a=[];
+            $("input[type='radio']:checked").each(function(){//获取所有name=choice2的值
+                a.push($(this).val());
+            });
+            if(a.length<s){
+                alert("请答完题");
+            }else {
+                $.ajax({
+                    // contentType: "application/json; charset=UTF-8",
+                    type: "post",
+                    dataType:"json",
+                    url:"/Pingjia/saveRode1",
+                    data:{name:a.toString(),courseId:$("#courseId").val(),teacherId:$("#teacherId").val(),taskId:$("#taskId").val(),typeId:$("#typeId").val()},
+                    async: true, //异步传输
+                    success:function (date) {
+                        //关闭自己
+                        //父窗口刷新
+                        layer.close(layer.index);
+                        parent.location.reload();
+                        //location.reload();
+                    }
+                })
+            }
+        })
+    })
+</script>
+
+</body>
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>Layui</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <!--    <link rel="stylesheet" th:href="@{/css/x-admin.css}" media="all">-->
+    <link rel="stylesheet" th:href="@{/lib/layui/css/layui.css}" media="all">
+    <script th:src="@{/js/jquery.min.js}"></script>
+    <script th:src="@{/lib/layui/layui.js}" charset="utf-8"></script>
+    <!--    <script th:src="@{/js/x-layui.js}" charset="utf-8"></script>-->
+
+</head>
+<body>
+<form class="layui-form layui-form-pane1" id="form1" name="form1"  lay-filter="first1">
+    <div class="layui-form-item" >
+        <label class="layui-form-label">学号</label>
+        <div class="layui-input-inline">
+            <input type="text" name="id" id="id"    class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">姓名</label>
+        <div class="layui-input-inline">
+            <input type="text" name="name" id="name"   autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label" for="city">班级ID</label>
+        <div class="layui-input-inline">
+            <select name="city" id="city" lay-verify="required"  lay-filter="selectTask" class="select">
+                <option value="">请选择一个班级</option>
+                <option  th:each="task:${rclassList1}" th:value="${task.getId()}" th:text="${task.getName()}"></option>
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">虚拟系统账号</label>
+        <div class="layui-input-inline">
+            <input type="number" name="stardatatime" id="stardatatime"    autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <button style="color: #01AAED">添加</button>
+</form>
+
+<!--<script src="//res.layui.com/layui/dist/layui.js" charset="utf-8"></script>-->
+<!-- 注意：如果你直接复制所有代码到本地，上述js路径需要改成你本地的 -->
+
+<script type="text/javascript">
+    layui.use(['table','layer','form'],function() {
+        var table = layui.table;
+        var $ = layui.jquery, layer = layui.layer; //独立版的layer无需执行这一句
+        var form = layui.form;
+        form.on('select(selectTask)', function (data) {
+            var classid = $("select[name=city]").val();
+            $("button").click(function () {
+                $.ajax({
+                    contentType: "application/json; charset=UTF-8",
+                    type: "POST",
+                    dataType: "json",
+                    url: "/students/add",
+                    data: JSON.stringify({
+                        sudentno: $("#id").val(),
+                        classid: classid,
+                        systemaccount: $("#stardatatime").val(),
+                        name: $("#name").val()
+                    }),
+                    async: false, //异步传输
+                    success: function (date) {
+                        if (date != null) {
+                            parent.location.reload();
+                        }
+                    }
+                })
+            })
+        })
+    });
+</script>
+
+</body>
+</html>

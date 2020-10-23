@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+    <meta>
+        <meta charset="utf-8"></meta>
+        <title>
+            教师综合评价系统 v1.0
+        </title>
+        <meta name="renderer" content="webkit">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="format-detection" content="telephone=no">
+        <link rel="stylesheet" th:href="@{/lib/layui/css/layui.css}" media="all">
+        <link rel="stylesheet" th:href="@{/css/x-admin.css}" media="all">
+        <script th:src="@{/js/jquery.min.js}"></script>
+    </head>
+
+    <body>
+        <div class="x-body">
+            <form class="layui-form">
+                <div class="layui-form-item">
+                    <div class="layui-input-inline">
+                        <input type="hidden"  id="id" name="id" th:value="${indicatorsss.getId()}" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label for="faid" class="layui-form-label">
+                        父亲id
+                    </label>
+                    <div class="layui-input-inline">
+                        <input type="text"  id="faid"  readonly="readonly" name="faid" th:value="${indicatorsss.getParentid()}" required="" lay-verify="required"
+                        autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label for="course" class="layui-form-label">
+                        排序码
+                    </label>
+                    <div class="layui-input-inline">
+                        <input type="username" id="course" readonly="readonly" name="course" th:value="${indicatorsss.getSortcode()}" required="" lay-verify="pass"
+                        autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label for="inid" class="layui-form-label">
+                        指标名称
+                    </label>
+                    <div class="layui-input-inline">
+                        <input type="username" id="inid" readonly="readonly" name="inid" th:value="${indicatorsss.getIndicatorname()}" required="" lay-verify="pass"
+                               autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label for="sode" class="layui-form-label">
+                        权重
+                    </label>
+                    <div class="layui-input-inline">
+                        <input type="username" id="sode" readonly="readonly" name="sode" th:value="${indicatorsss.getWeight()}" required="" lay-verify="pass"
+                               autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+        <div class="x-body">
+                <table class="layui-table">
+                    <thead>
+                    <tr>
+                        <th>
+                            ID
+                        </th>
+                        <th>
+                            选项内容
+                        </th>
+                        <th>
+                            分数
+                        </th>
+                        <th>
+                            指标ID
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="class:${rlternatives}">
+                        <td>
+                            <input type="text" readonly="readonly" th:value="${class.getId()}" name="">
+                        </td>
+                        <td>
+                            <input type="text" readonly="readonly" th:value="${class.getContent()}" name="">
+                        </td>
+                        <td>
+                            <input type="text" readonly="readonly" th:value="${class.getScore()}" name="">
+                        </td>
+                        <td>
+                            <input type="text" readonly="readonly" th:value="${class.getTarget()}" name="">
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+        </div>
+            </form>
+        </div>
+        <script type="text/javascript">
+        </script>
+    </body>
+
+</html>

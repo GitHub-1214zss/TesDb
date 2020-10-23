@@ -1,0 +1,41 @@
+spring:
+  datasource:
+    username: root
+    password: root
+    url: jdbc:mysql://localhost:3307/tesdb?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    type: com.alibaba.druid.pool.DruidDataSource
+  resources:
+    chain:
+      strategy:
+        content:
+          enabled: true
+          paths: /**
+  devtools:
+    restart:
+      enabled: true
+      additional-paths: src/main/java
+    add-properties: true
+  thymeleaf:
+    cache: true
+    enable-spring-el-compiler: true
+    encoding: UTF-8
+    suffix: .html
+    check-template-location: true
+    check-template: true
+    servlet:
+      content-type: text/html; charset=utf-8
+    mode: HTML
+    prefix: classpath:/templates/
+mybatis-plus:
+  global-config:
+    db-config:
+      id-type: auto
+  mapper-locations: classpath:com/ex/springboot/mapper/*.xml
+  type-aliases-package: com.example.demo.domain
+server:
+  port: 8081
+
+logging:
+  level:
+    com.example.demo.mapper: debug

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+    <meta>
+        <meta charset="utf-8"></meta>
+        <title>
+            教师综合评价系统 v1.0
+        </title>
+        <meta name="renderer" content="webkit">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="format-detection" content="telephone=no">
+        <link rel="stylesheet" th:href="@{/lib/layui/css/layui.css}" media="all">
+<!--        <link rel="stylesheet" th:href="@{/css/x-admin.css}" media="all">-->
+        <script th:src="@{/js/jquery-1.9.1.min.js}"></script>
+    <script th:src="@{/lib/layui/layui.js}" charset="utf-8"></script>
+    </head>
+
+    <body>
+        <div class="x-body">
+            <form class="layui-form">
+                <div class="layui-form-item">
+                    <label class="layui-form-label" for="city">类型指标</label>
+                    <div class="layui-input-inline">
+                        <select name="city" id="city" lay-verify="required"  lay-filter="selectTask" class="select">
+                            <option value="">请选择一个类型</option>
+                            <option  th:each="task:${add}" th:value="${task.getId()}" th:text="${task.getName()}"></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label for="course" class="layui-form-label">
+                        排序码
+                    </label>
+                    <div class="layui-input-inline">
+                        <input type="username" id="course"  name="course"  required="" lay-verify="pass"
+                        autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label for="inid" class="layui-form-label">
+                        指标名称
+                    </label>
+                    <div class="layui-input-inline">
+                        <input type="username" id="inid"  name="inid"  required="" lay-verify="pass"
+                               autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label for="sode" class="layui-form-label">
+                        权重
+                    </label>
+                    <div class="layui-input-inline">
+                        <input type="username" id="sode"  name="sode"  required="" lay-verify="pass"
+                               autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+        <div class="x-body">
+                <table class="layui-table">
+                    <thead>
+                    <tr>
+                        <th>
+                            选项内容
+                        </th>
+                        <th>
+                            分数
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>
+                            <input type="text" value="1"  name="">
+                        </td>
+                        <td>
+                            <input type="text"  value="1" name="">
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+        </div>
+                <div class="layui-form-item">
+                    <label for="course" class="layui-form-label">
+                    </label>
+                    <button id="buttons" class="layui-btn" lay-filter="add" type="button">
+                        添加
+                    </button>
+                    <a class="layui-btn layui-btn-xs" id="details">添加一行</a>
+                </div>
+            </form>
+        </div>
+        <script type="text/javascript">
+                        layui.use(['table','layer','form'],function() {
+                            var table = layui.table;
+                            var $$ = layui.jquery, layer = layui.layer; //独立版的layer无需执行这一句
+                            var form = layui.form;
+
+                            form.on('select(selectTask)', function (data) {
+                                var taskId = $("select[name=city]").val();
+                                var course=$("#course").val();
+                                var name=$("#inid").val();
+                                var weight=$("#sode").val();
+                                var data2=new Array();
+                                var data3=new Array();
+                                $("tbody tr").each(function (index) {
+                                    var data =$($(this).children()[0]).children().val();
+                                    var data1 =$($(this).children()[1]).children().val();
+                                    data2.push(data);
+                                    data3.push(data1);
+                                });
+                                console.log(data2);
+                                $("#buttons").click(function () {
+                                    $.ajax({
+                                        contentType: "application/json; charset=UTF-8",
+                                        type: "POST",
+                                        dataType:"json",
+                                        url:"/Indicator/addI",
+                                        async: false, //异步传输
+                                        traditional: true,
+                                        data:JSON.stringify({indicatorname:name,weight:weight,sortcode:course,typeid:taskId,boxIds:data2,boxType:data3}),
+                                        success:function (data) {
+                                            if (data["code"] == 200) {
+                                                //关闭弹框
+                                                console.log("添加成功");
+                                                parent.location.reload();
+                                            } else {
+
+                                            }
+
+                                        }
+                                    })
+                                })
+                            })
+                            //刷新表格
+                            $('#btn-refresh').on('click', function () {
+                                tableIn.reload()
+                            });
+                            $("#details").click(function () {
+                                var s="<tr>\n" +
+                                    "                        <td>\n" +
+                                    "                            <input type='text' value='1' name=''>\n" +
+                                    "                        </td>\n" +
+                                    "                        <td>\n" +
+                                    "                            <input type='text' value='1' name=''>\n" +
+                                    "                        </td>\n" +
+                                    "                    </tr>"
+                                $("tbody tr:last").after(s);
+                            })
+                        })
+        </script>
+    </body>
+
+</html>

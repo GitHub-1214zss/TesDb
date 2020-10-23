@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+    <meta>
+        <meta charset="utf-8"></meta>>
+        <title>
+            教师综合评价系统 v1.0
+        </title>
+        <meta name="renderer" content="webkit">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="format-detection" content="telephone=no">
+        <link rel="stylesheet" th:href="@{/css/x-admin.css}" media="all">
+        <script th:src="@{/js/jquery.min.js}"></script>
+    </head>
+
+    <body>
+        <div class="x-body">
+            <form class="layui-form">
+                <div class="layui-form-item">
+                    <label for="role" class="layui-form-label">
+                        <span class="x-red">*</span>类型
+                    </label>
+                    <div class="layui-input-inline">
+                      <select name="role">
+                          <option  value="">请选择角色</option>
+                        <option  th:each="eavlue:${evalua}" th:value="${eavlue.getName()}" th:text="${eavlue.getName()}"></option>
+                      </select>
+                    </div>
+                </div>
+                <div class="layui-form-item" >
+                    <div class="layui-inline">
+                        <label class="layui-form-label">开始日期时间选择</label>
+                        <div class="layui-input-inline">
+                            <input type="text" class="layui-input test"  id="test5" placeholder="yyyy-MM-dd HH:mm:ss">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">结束时间选择</label>
+                        <div class="layui-input-inline">
+                            <input type="text" class="layui-input test" id="test6" placeholder="yyyy-MM-dd HH:mm:ss">
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <button  class="layui-btn" lay-filter="add" type="button">
+                        增加
+                    </button>
+                </div>
+            </form>
+        </div>
+        <script th:src="@{/lib/layui/layui.js}" charset="utf-8">
+        </script>
+        <script th:src="@{/js/x-layui.js}" charset="utf-8">
+        </script>
+        <script type="text/javascript">
+            layui.use(['form','layer','laydate'], function(){
+                $$ = layui.jquery;
+              var form = layui.form
+              ,layer = layui.layer;
+                var laydate = layui.laydate;
+                //传入Date对象给初始值
+                //日期时间选择器
+                lay('.test').each(function(){
+                    laydate.render({
+                        elem: this
+                        ,type: 'datetime'
+                        ,trigger: 'click'
+                    });
+                });
+              //自定义验证规则
+              form.verify({
+                nikename: function(value){
+                  if(value.length < 5){
+                    return '昵称至少得5个字符啊';
+                  }
+                }
+                ,pass: [/(.+){6,12}$/, '密码必须6到12位']
+                ,repass: function(value){
+                    if($$('#L_pass').val()!=$$('#L_repass').val()){
+                        return '两次密码不一致';
+                    }
+                }
+              });
+
+              //监听提交
+$(".layui-btn").click(function () {
+$.ajax({
+    contentType: "application/json; charset=UTF-8",
+    type: "POST",
+    dataType:"json",
+    url:"/Pingjia/add",
+    data:JSON.stringify({name:$("select").val(),startdata:$("#test5").val(),enddata:$("#test6").val()}),
+    async: false, //异步传输
+    success: function (data) {
+        console.log(data["data"]["account"]);
+        if(data["data"]["account"]==""){
+            layer.msg("添加失败原因"+"========"+data["msg"]);
+        }
+        else {
+                 layer.msg("添加成功")
+                // 获得frame索引
+            // setTimeout(function() {
+            //     console.log("1111111");
+            //     window.location.href = "${pageContext.request.contextPath}/member-list";
+            // },2000);
+            // parent.location.reload();
+            //     var index = parent.layer.getFrameIndex(window.name);
+            //     //关闭当前frame
+            //     parent.layer.close(index);
+            parent.layer.close(parent.layer.index);
+            parent.location.reload();
+        }
+        //window.location="../static/index.html";
+    },
+    error: function () {
+        console.log("失败")
+    }
+})
+})
+
+
+            });
+
+        </script>
+    </body>
+
+</html>
